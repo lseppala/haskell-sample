@@ -16,11 +16,14 @@ library
   hs-source-dirs:      src
   exposed-modules:     Meatbar
   other-modules:       Meatbar.Model
+                     , Meatbar.Database.Person
+                     , Meatbar.Database.Consumption
   build-depends:       base
                      , cassava
                      , persistent
                      , persistent-sqlite
                      , persistent-template
+                     , mtl
                      , text
                      , time
                      , scotty

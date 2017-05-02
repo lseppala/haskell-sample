@@ -13,6 +13,9 @@ import           Database.Persist.TH
 
 -- Entities with foreign-key relationships must be defined in the same QQ
 -- block, thus 'Person' and 'Consumption must be defined at the same time
+--
+-- 'UniqueName': In our domain, people have universally unique names
+-- 'UniqueConsume': a person can only eat one bar at a given time
 share [mkPersist sqlSettings, mkMigrate "migrate"] [persistLowerCase|
     Person json
       name Text
@@ -20,5 +23,6 @@ share [mkPersist sqlSettings, mkMigrate "migrate"] [persistLowerCase|
     Consumption json
       personId PersonId
       meatType Text
-      consumed_at UTCTime
+      consumedAt UTCTime
+      UniqueConsume personId consumedAt
 |]
