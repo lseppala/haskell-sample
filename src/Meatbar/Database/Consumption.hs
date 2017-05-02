@@ -5,29 +5,20 @@
 module Meatbar.Database.Consumption where
 
 import           Control.Monad.IO.Class
-import           Control.Monad.Reader   (runReaderT)
-import           Database.Persist
+import           Database.Persist.Sql
 
 import           Meatbar.Model
 
 
-type ConsumptionBackend backend =
-    ( PersistQueryRead backend
-    , PersistRecordBackend Consumption backend
-    , PersistUniqueWrite backend
-    )
-
 -- | list all meatbar consumptions, in ascending order (oldest first)
-listConsumptions :: (ConsumptionBackend backend, MonadIO m)
-           => backend
-           -> m [Entity Consumption]
-listConsumptions db = selectList [] [Asc ConsumptionConsumedAt] `runReaderT` db
+listConsumptions :: MonadIO m
+                 => SqlPersistT m [Entity Consumption]
+listConsumptions = selectList [] [Asc ConsumptionConsumedAt]
 
 
 
 -- | Idempotently add a Consumption to the database.
-putConsumption :: (ConsumptionBackend backend, MonadIO m)
-               => Consumption
-               -> backend
-               -> m (Either (Entity Consumption) (Key Consumption))
-putConsumption consumption db = insertBy consumption `runReaderT` db
+putConsumption  :: MonadIO m
+                => Consumption
+                -> SqlPersistT m (Either (Entity Consumption) (Key Consumption))
+putConsumption consumption = insertBy consumption

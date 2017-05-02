@@ -18,15 +18,23 @@ library
   other-modules:       Meatbar.Model
                      , Meatbar.Database.Person
                      , Meatbar.Database.Consumption
+                     , Meatbar.Web.Route
+                     , Meatbar.Web.Env
+                     , Meatbar.Web.Control.Person
+                     , Meatbar.Web.Control.Consumption
   build-depends:       base
+                     , aeson
                      , cassava
+                     , http-types
+                     , mtl
                      , persistent
                      , persistent-sqlite
                      , persistent-template
-                     , mtl
+                     , resource-pool
+                     , scotty
+                     , transformers
                      , text
                      , time
-                     , scotty
   default-language:    Haskell2010
   ghc-options:         -Wall
 

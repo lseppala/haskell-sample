@@ -5,27 +5,19 @@
 module Meatbar.Database.Person where
 
 import           Control.Monad.IO.Class
-import           Control.Monad.Reader   (runReaderT)
-import           Database.Persist
+import           Database.Persist.Sql
 
 import           Meatbar.Model
 
 
-type PersonBackend backend =
-    ( PersistQueryRead backend
-    , PersistRecordBackend Person backend
-    , PersistUniqueWrite backend
-    )
-
 -- | List all persons
-listPersons :: (PersonBackend backend, MonadIO m)
-           => backend
-           -> m [Entity Person]
-listPersons db = selectList [] [] `runReaderT` db
+listPersons :: MonadIO m
+            => SqlPersistT m [Entity Person]
+listPersons = selectList [] []
+
 
 -- | Idempotently add a person to the database.
-putPerson :: (PersonBackend backend, MonadIO m)
+putPerson :: MonadIO m
           => Person
-          -> backend
-          -> m (Either (Entity Person) (Key Person))
-putPerson person db = insertBy person `runReaderT` db
+          -> SqlPersistT m (Either (Entity Person) (Key Person))
+putPerson person = insertBy person
