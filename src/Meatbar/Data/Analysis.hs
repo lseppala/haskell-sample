@@ -35,7 +35,8 @@ compareGroupKey :: Ord a => GroupedBy a b -> GroupedBy a b -> Ordering
 compareGroupKey x y = compare (groupKey x) (groupKey y)
 
 
--- | Find the largest group by number of elements in the group
+-- | Find the largest group by number of elements in the group. Gives the last
+-- group if all equal sizes
 largestGroup :: Foldable f => f (GroupedBy b a) -> GroupedBy b a
 largestGroup =
     maximumBy (\x y -> compare (groupCount x) (groupCount y))

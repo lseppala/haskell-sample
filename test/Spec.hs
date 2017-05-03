@@ -37,15 +37,19 @@ main = do
                 it "groups items with same key" $
                     groupedBy asInt [1, 1] `shouldBe` [GroupedBy 1 [1,1]]
 
-                it "doesnt' group items with different key" $
+                it "doesn't group items with different key" $
                     groupedBy asInt [1, 2] `shouldBe`
                         [GroupedBy 1 [1], GroupedBy 2 [2]]
 
             describe "largestGroup" $ do
-                let groups = groupedBy asInt [1,1,2]
                 it "finds largest group" $
-                    largestGroup groups
+                    let groups = groupedBy asInt [1,1,2]
+                     in largestGroup groups
                         `shouldBe` GroupedBy 1 [1,1]
+                it "gives last group if all equal sizes" $
+                    let groups = groupedBy asInt [1,2]
+                     in largestGroup groups
+                        `shouldBe` GroupedBy 2 [2]
 
             describe "groupedByDay" $ do
                 it "groups single day" $
@@ -118,3 +122,24 @@ main = do
                     let noStreak =
                             [lastMonth, lastMonth, yesterday, yesterday, now, now]
                      in allHigherCountDailyStreaks id noStreak `shouldBe` []
+
+                it "has multiple streaks when broken up" $
+                    let lastMonthPlus1 = secondsInDay `addUTCTime` lastMonth
+                        dayBeforeYesterday = (-secondsInDay) `addUTCTime` yesterday
+                        multipleStreaks =
+                            [
+                              -- first streak
+                              lastMonth, lastMonthPlus1, lastMonthPlus1
+                              -- break
+                            , dayBeforeYesterday
+                              -- second streak
+                            , yesterday, now, now
+                            ]
+                     in allHigherCountDailyStreaks id multipleStreaks `shouldBe`
+                        [ [ (utctDay lastMonth, 1)
+                          , (utctDay lastMonthPlus1, 2)
+                          ] ,
+                          [ (utctDay yesterday, 1)
+                          , (utctDay now, 2)
+                          ]
+                        ]
