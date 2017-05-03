@@ -9,10 +9,14 @@ module Meatbar.Web.Control.Consumption
     ) where
 
 import           Data.Aeson                   (Value, object, (.=))
-import           Network.HTTP.Types.Status    (created201, badRequest400, conflict409)
+import           Database.Persist.Types       (entityVal)
+import           Network.HTTP.Types.Status    (badRequest400, conflict409,
+                                               created201)
 import           Web.Scotty.Trans
 
+import           Meatbar.Data.Analysis
 import qualified Meatbar.Database.Consumption as Query
+import           Meatbar.Model
 import           Meatbar.Web.Env
 
 
@@ -51,8 +55,17 @@ createConsumption = do
 
 
 getConsumptionStreak :: MeatbarAction ()
-getConsumptionStreak = return ()
+getConsumptionStreak = do
+    cs <- transact (Query.listConsumptions)
+    json $ allHigherCountDailyStreaks byConsumedAt cs
+    where
+        byConsumedAt = consumptionConsumedAt . entityVal
 
 
 getMonthlyStats :: MeatbarAction ()
-getMonthlyStats = return ()
+getMonthlyStats = do
+    cs <- transact (Query.listConsumptions)
+    json $ allHigherCountDailyStreaks byConsumedAt cs
+    where
+        byConsumedAt = consumptionConsumedAt . entityVal
+

@@ -12,4 +12,6 @@ test: all
 	@stack test
 
 ghcid:
-	@stack exec ghcid -- --command 'stack ghci meatbar'
+	@stack exec ghcid -- \
+		--command 'stack ghci meatbar:lib meatbar:meatbar-test' \
+		--test ':main'
