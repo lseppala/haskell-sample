@@ -8,14 +8,16 @@ module Meatbar.Web.Control.Consumption
     , getMonthlyStats
     ) where
 
+import           Control.Monad                (void)
 import           Data.Aeson                   (Value, object, (.=))
+import           Data.Time.Calendar           (toGregorian)
 import           Database.Persist.Types       (entityVal)
-import           Network.HTTP.Types.Status    (badRequest400, conflict409,
-                                               created201)
+import qualified Network.HTTP.Types.Status    as HTTP
 import           Web.Scotty.Trans
 
 import           Meatbar.Data.Analysis
 import qualified Meatbar.Database.Consumption as Query
+import qualified Meatbar.Database.Person      as Query
 import           Meatbar.Model
 import           Meatbar.Web.Types
 
@@ -25,47 +27,69 @@ getConsumptions =
     transact Query.listConsumptions >>= json
 
 -- | Create a new 'Consumption' in the database from a POST request.
+-- A 'Consumption' JSON request has the form:
+-- @
+--    { "meatType": <string>,
+--      "consumedAt": <ISO 8601 date formated string>,
+--      "personId": <integer>
+--    }
+-- @
 -- Possible HTTP responses:
 --  * 201: 'Consumption' successfully created in the database
---  * 400: The JSON request was unparsable
---  * 409: A 'Consumption' the same Person name and time already exists
+--  * 400: The JSON request was unparsable or the specified person does not exist
+--  * 409: A 'Consumption' with the same Person and time already exists
 createConsumption :: MeatbarAction ()
 createConsumption = do
     newConsume <- rescue jsonData (const haltBadParse)
+    void $ transact (Query.lookupPerson (consumptionPersonId newConsume))
+        >>= maybe haltNoPerson return
     newConsumeResult <- transact $ Query.putConsumption newConsume
     either
-        ({-exists-} const haltConflict)
-        ({-new-} const $ status created201 >> finish)
+        ({-exists -} const haltConflict)
+        ({-created-} const $ status HTTP.created201 >> finish)
         newConsumeResult
 
    where
        errorObject :: String -> Value
        errorObject msg = object [ "error" .= msg ]
+
        haltBadParse = do
-            status badRequest400
+            status HTTP.badRequest400
             json $ errorObject
                 "Unparsable JSON: the JSON request was badly formed."
             finish
-       haltConflict = do
-           status conflict409
+       haltNoPerson = do
+           status HTTP.badRequest400
            json $ errorObject
-               "Conflict: A meatbar was already consumed \
-               \ by that person at that time."
+               "No such person with the given personId exists"
+           finish
+       haltConflict = do
+           status HTTP.conflict409
+           json $ errorObject
+               "Conflict: A meatbar was already consumed\
+               \ by that person at the given time."
            finish
 
 
 getConsumptionStreak :: MeatbarAction ()
 getConsumptionStreak = do
     cs <- transact Query.listConsumptions
-    json $ allHigherCountDailyStreaks byConsumedAt cs
+    json $ fmap streakObject <$> allHigherCountDailyStreaks byConsumedAt cs
     where
         byConsumedAt = consumptionConsumedAt . entityVal
+        streakObject (date, count) =
+            object [ "date" .= date, "count" .= count ]
 
 
 getMonthlyStats :: MeatbarAction ()
 getMonthlyStats = do
     cs <- transact Query.listConsumptions
-    json $ largestDayEachMonth byConsumedAt cs
+    json $ monthObject <$> largestDayEachMonth byConsumedAt cs
     where
         byConsumedAt = consumptionConsumedAt . entityVal
-
+        monthObject (date, count) =
+            let (year, month, day) = toGregorian date
+            in object
+                [ "month" .= (show year ++ "-" ++ show month)
+                , "dayOfMonth" .= show day
+                , "count" .= count ]

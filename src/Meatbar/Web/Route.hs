@@ -22,7 +22,7 @@ routes = do
     post "/consumption" createConsumption
 
     -- Provide the longest consecutive meatbar consumption streak
-    get  "/consumption/streak" getConsumptionStreak
+    get  "/consumption/streaks" getConsumptionStreak
 
     -- Provide statistics of day with highest consumption for each month
     get  "/consumption/month_stats" getMonthlyStats

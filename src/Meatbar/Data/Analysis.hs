@@ -14,7 +14,8 @@ data GroupedBy a b = GroupedBy
     } deriving (Show, Eq)
 
 -- | Wrapper for year and month
-newtype YearMonth = YearMonth (Integer, Int) deriving (Eq, Ord, Show)
+newtype YearMonth =
+    YearMonth (Integer, Int) deriving (Eq, Ord, Show)
 
 
 -- | Modified version of 'groupBy', which collects elements into the

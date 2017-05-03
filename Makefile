@@ -11,6 +11,9 @@ lint:
 test: all
 	@stack test
 
+run: all
+	@stack exec meatbar
+
 ghcid:
 	@stack exec ghcid -- \
 		--command 'stack ghci meatbar:lib meatbar:meatbar-test' \
