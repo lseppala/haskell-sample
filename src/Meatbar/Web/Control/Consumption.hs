@@ -22,7 +22,7 @@ import           Meatbar.Web.Env
 
 getConsumptions :: MeatbarAction ()
 getConsumptions =
-    transact (Query.listConsumptions) >>= json
+    transact Query.listConsumptions >>= json
 
 -- | Create a new 'Consumption' in the database from a POST request.
 -- Possible HTTP responses:
@@ -34,8 +34,8 @@ createConsumption = do
     newConsume <- rescue jsonData (const haltBadParse)
     newConsumeResult <- transact $ Query.putConsumption newConsume
     either
-        (\_exists -> haltConflict)
-        (\_new    -> status created201 >> finish)
+        ({-exists-} const haltConflict)
+        ({-new-} const $ status created201 >> finish)
         newConsumeResult
 
    where
@@ -56,7 +56,7 @@ createConsumption = do
 
 getConsumptionStreak :: MeatbarAction ()
 getConsumptionStreak = do
-    cs <- transact (Query.listConsumptions)
+    cs <- transact Query.listConsumptions
     json $ allHigherCountDailyStreaks byConsumedAt cs
     where
         byConsumedAt = consumptionConsumedAt . entityVal
@@ -64,7 +64,7 @@ getConsumptionStreak = do
 
 getMonthlyStats :: MeatbarAction ()
 getMonthlyStats = do
-    cs <- transact (Query.listConsumptions)
+    cs <- transact Query.listConsumptions
     json $ allHigherCountDailyStreaks byConsumedAt cs
     where
         byConsumedAt = consumptionConsumedAt . entityVal

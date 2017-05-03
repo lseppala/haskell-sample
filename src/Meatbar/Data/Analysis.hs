@@ -1,5 +1,6 @@
 module Meatbar.Data.Analysis where
 
+import           Data.Function      (on)
 import           Data.List
 import           Data.Time.Calendar
 import           Data.Time.Clock
@@ -20,7 +21,7 @@ newtype YearMonth = YearMonth (Integer, Int) deriving (Eq, Ord, Show)
 -- 'GroupedBy' data type to associate elements with the key they were grouped by
 groupedBy :: Ord b => (a -> b) -> [a] -> [GroupedBy b a]
 groupedBy _ [] = []
-groupedBy f (x:xs) = (GroupedBy (f x) (x:ys)): groupedBy f zs
+groupedBy f (x:xs) = GroupedBy (f x) (x:ys): groupedBy f zs
     where
         (ys,zs) = span (\y -> f x == f y) xs
 
@@ -39,7 +40,7 @@ compareGroupKey x y = compare (groupKey x) (groupKey y)
 -- group if all equal sizes
 largestGroup :: Foldable f => f (GroupedBy b a) -> GroupedBy b a
 largestGroup =
-    maximumBy (\x y -> compare (groupCount x) (groupCount y))
+    maximumBy (compare `on` groupCount)
 
 
 -- | Group a list of elements by 'Day' derived from a function to get 'UTCTime'
@@ -72,6 +73,8 @@ largestDayEachMonth f as = do
 
 -- | For a list of elements, find all streaks where the next element in the
 -- list matches some predicate when compared to the current element
+-- n.b. The 'reverse' functions are used to keep elements in the same order as
+-- the input.
 allStreaks :: [a] -> (a -> a -> Bool) -> [[a]]
 allStreaks as p = reverse $ go as [] []
     where
@@ -80,13 +83,13 @@ allStreaks as p = reverse $ go as [] []
             acc
         -- Base case, return the accumulation
         go [] current acc =
-            (reverse current):acc
+            reverse current : acc
         -- A single remaining element is not a streak
         go [_] [] acc =
             acc
         -- A remaining element element tops off the streak
         go [x] current acc =
-            (reverse $ (x:current)):acc
+            reverse (x:current) : acc
         -- Case when there is no streak started
         go (x:y:xs) [] acc
           -- The the next element meets the predicate, start a streak
@@ -103,7 +106,7 @@ allStreaks as p = reverse $ go as [] []
           -- The next element does not meet the predicate. This is the end
           -- of the current streak
           | otherwise =
-              go (y:xs) [] $ (reverse $ x:current):acc
+              go (y:xs) [] $ reverse (x:current) : acc
 
 
 -- | Find all streaks where the group of the current day has more elements than

@@ -1,8 +1,8 @@
-import Test.Hspec
-import Data.Time.Clock
-import Data.Time.Calendar
+import           Data.Time.Calendar
+import           Data.Time.Clock
+import           Test.Hspec
 
-import Meatbar.Data.Analysis
+import           Meatbar.Data.Analysis
 
 -- Used to make dis-ambiguate forf type inference
 asInt :: Int -> Int
@@ -25,7 +25,7 @@ main = do
     now <- getCurrentTime
     let yesterday = (-secondsInDay) `addUTCTime` now
         lastMonth = (-secondsInMonth) `addUTCTime` now
-    hspec $ do
+    hspec $
         describe "Meatbar.Data.Analysis" $ do
             describe "groupedBy" $ do
                 it "has no groups with empty list" $

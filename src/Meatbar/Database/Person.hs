@@ -20,4 +20,4 @@ listPersons = selectList [] []
 putPerson :: MonadIO m
           => Person
           -> SqlPersistT m (Either (Entity Person) (Key Person))
-putPerson person = insertBy person
+putPerson = insertBy

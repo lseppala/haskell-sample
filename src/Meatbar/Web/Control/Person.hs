@@ -13,4 +13,4 @@ import           Meatbar.Web.Env
 
 getPersons :: MeatbarAction ()
 getPersons =
-    transact (Query.listPersons) >>= json
+    transact Query.listPersons >>= json

@@ -21,4 +21,4 @@ listConsumptions = selectList [] [Asc ConsumptionConsumedAt]
 putConsumption  :: MonadIO m
                 => Consumption
                 -> SqlPersistT m (Either (Entity Consumption) (Key Consumption))
-putConsumption consumption = insertBy consumption
+putConsumption = insertBy

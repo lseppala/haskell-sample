@@ -48,6 +48,6 @@ data Env = Env
 -- | Run a database action and lifts the result into the right transformer.
 -- This will be 'MeatbarAction a' in all cases.
 transact :: (MonadReader Env m, MonadTrans t, MonadIO (t m))
-         => (SqlPersistT IO a)
+         => SqlPersistT IO a
          -> t m a
 transact query = lift (asks _dbPool) >>= liftIO . runSqlPool query
