@@ -1,4 +1,5 @@
 {-# LANGUAGE FlexibleContexts  #-}
+{-# LANGUAGE GADTs  #-}
 {-# LANGUAGE OverloadedStrings #-}
 module Meatbar.Web.Route (routes) where
 

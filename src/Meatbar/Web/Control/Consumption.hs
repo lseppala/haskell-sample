@@ -65,7 +65,7 @@ getConsumptionStreak = do
 getMonthlyStats :: MeatbarAction ()
 getMonthlyStats = do
     cs <- transact Query.listConsumptions
-    json $ allHigherCountDailyStreaks byConsumedAt cs
+    json $ largestDayEachMonth byConsumedAt cs
     where
         byConsumedAt = consumptionConsumedAt . entityVal
 

@@ -9,8 +9,9 @@ module Meatbar.Web.Types
     )where
 
 
-import           Control.Monad.Reader      (MonadIO, MonadReader)
-import           Web.Scotty.Trans          (ActionT, ScottyError, ScottyT)
+import           Control.Monad.Reader (MonadIO, MonadReader)
+import           Data.Text.Lazy            (Text)
+import           Web.Scotty.Trans     (ActionT, ScottyError, ScottyT)
 
 import           Meatbar.Env
 
@@ -24,14 +25,18 @@ import           Meatbar.Env
 -- @
 --   routeAction :: (MonadReader Env m, MonadIO m, ScottyError e) => ActionT e m a
 -- @
-type MeatbarWebCtx t a =
+type MeatbarAction a =
     forall m e.
         ( MonadReader Env m
         , MonadIO m
         , ScottyError e
         )
-    => t e m a
+    => ActionT e m a
 
-type MeatbarAction a = MeatbarWebCtx ActionT a
-
-type MeatbarScotty a = MeatbarWebCtx ScottyT a
+-- | Similar, but for 'ScottyT'. Specifies 'Text' as the Error type
+type MeatbarScotty a =
+    forall m.
+        ( MonadReader Env m
+        , MonadIO m
+        )
+    => ScottyT Text m a

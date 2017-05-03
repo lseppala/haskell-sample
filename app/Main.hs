@@ -1,6 +1,9 @@
 module Main where
 
-import Lib
+import Meatbar
 
 main :: IO ()
-main = someFunc
+main = runWithInMemorySqlite $ do
+    runMigrations
+    loadCsvData "data.csv"
+    startServer 8080

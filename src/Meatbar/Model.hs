@@ -16,7 +16,7 @@ import           Database.Persist.TH
 --
 -- 'UniqueName': In our domain, people have universally unique names
 -- 'UniqueConsume': a person can only eat one bar at a given time
-share [mkPersist sqlSettings, mkMigrate "migrate"] [persistLowerCase|
+share [mkPersist sqlSettings, mkMigrate "migrateModel"] [persistLowerCase|
     Person json
       name Text
       UniqueName name

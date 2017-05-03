@@ -9,10 +9,10 @@ import           Control.Monad.Reader
 import           Data.ByteString.Lazy
 import           Data.Csv
 import           Data.Foldable
-import           Database.Persist.Types       (entityKey)
 import           Data.Text
 import           Data.Time.Clock
 import           Data.Time.Format
+import           Database.Persist.Types       (entityKey)
 
 import           Meatbar.Database.Consumption
 import           Meatbar.Database.Person
