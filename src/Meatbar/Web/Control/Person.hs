@@ -8,7 +8,7 @@ module Meatbar.Web.Control.Person
 import           Web.Scotty.Trans        (json)
 
 import qualified Meatbar.Database.Person as Query
-import           Meatbar.Web.Env
+import           Meatbar.Web.Types
 
 
 getPersons :: MeatbarAction ()

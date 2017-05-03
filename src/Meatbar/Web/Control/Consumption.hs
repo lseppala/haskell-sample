@@ -17,7 +17,7 @@ import           Web.Scotty.Trans
 import           Meatbar.Data.Analysis
 import qualified Meatbar.Database.Consumption as Query
 import           Meatbar.Model
-import           Meatbar.Web.Env
+import           Meatbar.Web.Types
 
 
 getConsumptions :: MeatbarAction ()

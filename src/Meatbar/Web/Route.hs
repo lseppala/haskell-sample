@@ -6,7 +6,7 @@ import           Web.Scotty.Trans
 
 import           Meatbar.Web.Control.Consumption
 import           Meatbar.Web.Control.Person
-import           Meatbar.Web.Env
+import           Meatbar.Web.Types
 
 
 routes :: MeatbarScotty ()

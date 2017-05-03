@@ -17,12 +17,13 @@ library
   exposed-modules:     Meatbar
                      , Meatbar.Data.Analysis
   other-modules:       Meatbar.Model
-                     , Meatbar.Database.Person
                      , Meatbar.Database.Consumption
-                     , Meatbar.Web.Route
-                     , Meatbar.Web.Env
-                     , Meatbar.Web.Control.Person
+                     , Meatbar.Database.Person
+                     , Meatbar.Env
                      , Meatbar.Web.Control.Consumption
+                     , Meatbar.Web.Control.Person
+                     , Meatbar.Web.Types
+                     , Meatbar.Web.Route
   build-depends:       base
                      , aeson
                      , cassava
