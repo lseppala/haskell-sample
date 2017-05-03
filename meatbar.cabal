@@ -20,12 +20,14 @@ library
                      , Meatbar.Database.Consumption
                      , Meatbar.Database.Person
                      , Meatbar.Env
+                     , Meatbar.Load
                      , Meatbar.Web.Control.Consumption
                      , Meatbar.Web.Control.Person
                      , Meatbar.Web.Types
                      , Meatbar.Web.Route
   build-depends:       base
                      , aeson
+                     , bytestring
                      , cassava
                      , http-types
                      , mtl
