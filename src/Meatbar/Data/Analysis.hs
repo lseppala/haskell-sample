@@ -1,9 +1,11 @@
+{-# LANGUAGE TemplateHaskell #-}
 module Meatbar.Data.Analysis where
 
-import           Data.Function      (on)
+import           Data.Function       (on)
 import           Data.List
 import           Data.Time.Calendar
 import           Data.Time.Clock
+import           Database.Persist.TH
 
 
 -- | Data type to contain a group of elements, 'groupElems', which all share
@@ -15,7 +17,15 @@ data GroupedBy a b = GroupedBy
 
 -- | Wrapper for year and month
 newtype YearMonth =
-    YearMonth (Integer, Int) deriving (Eq, Ord, Show)
+    YearMonth (Integer, Int) deriving (Eq, Ord, Show, Read)
+
+timeToYearMonth :: UTCTime -> YearMonth
+timeToYearMonth time =
+    let (year, month, _) =
+            toGregorian (utctDay time)
+         in YearMonth (year, month)
+
+derivePersistField "YearMonth"
 
 
 -- | Modified version of 'groupBy', which collects elements into the
@@ -65,10 +75,10 @@ largestDayEachMonth :: (a -> UTCTime)
                     -> [a]
                     -> [(Day, Int)]
 largestDayEachMonth f as = do
-    let dayGroups = groupedByDay f as
+    let dayGroups  = groupedByDay f as
         monthGroups = groupedByDayOfMonth dayGroups
-    g <- monthGroups
-    let bigDay = largestGroup (groupElems g)
+    monthGroup <- monthGroups
+    let bigDay = largestGroup (groupElems monthGroup)
     return (groupKey bigDay, groupCount bigDay)
 
 

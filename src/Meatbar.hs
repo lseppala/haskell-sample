@@ -17,12 +17,13 @@ import           Meatbar.Env
 import           Meatbar.Load
 import           Meatbar.Model
 import           Meatbar.Web
+import           Meatbar.Database.Consumption
 
 
 -- | Run actions in the in-memory SQLite database, without debug logging
 runWithInMemorySqlite :: ReaderT Env (NoLoggingT IO) () -> IO ()
 runWithInMemorySqlite actions =
-    runNoLoggingT $ withSqliteConn ":memory:" $
+    runNoLoggingT $ withSqliteConn "meatbar.db" $
         \conn -> actions `runReaderT` Env conn
 
 
@@ -30,7 +31,9 @@ runWithInMemorySqlite actions =
 runMigrations :: MonadIO m
               => ReaderT Env m ()
 runMigrations =
-    withBackend (runMigration migrateModel)
+    withBackend $ do
+        runMigration migrateModel
+        rollupConsumption
 
 
 -- | Given a FilePath to CSV file, load of all the consumption records

@@ -11,6 +11,9 @@ import           Data.Text
 import           Data.Time.Clock
 import           Database.Persist.TH
 
+import           Meatbar.Data.Analysis
+
+
 -- Entities with foreign-key relationships must be defined in the same QQ
 -- block, thus 'Person' and 'Consumption must be defined at the same time
 --
@@ -25,4 +28,10 @@ share [mkPersist sqlSettings, mkMigrate "migrateModel"] [persistLowerCase|
       meatType Text
       consumedAt UTCTime
       UniqueConsume personId consumedAt
+    ConsumptionRollup
+      personId PersonId
+      yearMonth YearMonth
+      numBarsConsumed Int
+      mostConsumedBarType Text
+      UniqueNumBarsPersonYearMonth personId yearMonth
 |]

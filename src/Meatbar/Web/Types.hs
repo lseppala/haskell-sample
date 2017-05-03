@@ -33,7 +33,8 @@ type MeatbarAction a =
         )
     => ActionT e m a
 
--- | Similar, but for 'ScottyT'. Specifies 'Text' as the Error type
+-- | Like 'MeatbarAction', but for 'ScottyT'. Specifies 'Text' as the
+-- 'ScottyError' type
 type MeatbarScotty a =
     forall m.
         ( MonadReader Env m

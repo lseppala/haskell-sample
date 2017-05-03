@@ -1,17 +1,17 @@
-.PHONY: all compile lint test
+.PHONY: all compile lint test run
 
 all: compile lint
 
 compile:
-	@stack build --fast --trace --no-run-tests
+	@stack build --fast --no-run-tests
 
 lint: 
 	@stack exec hlint -- .
 
-test: all
+test: compile
 	@stack test
 
-run: all
+run: compile
 	@stack exec meatbar
 
 ghcid:

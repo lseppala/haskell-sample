@@ -1,4 +1,3 @@
-import           Data.Time.Calendar
 import           Data.Time.Clock
 import           Test.Hspec
 
@@ -65,10 +64,6 @@ main = do
 
             describe "groupedByDayOfMonth" $ do
                 let dayGroups = groupedByDay id [now, now, lastMonth]
-                    timeToYearMonth time =
-                        let (year, month, _) =
-                                toGregorian (utctDay time)
-                        in YearMonth (year, month)
                 it "has two groups" $
                     length (groupedByDayOfMonth dayGroups) `shouldBe` 2
                 it "groups each month" $

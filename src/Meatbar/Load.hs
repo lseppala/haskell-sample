@@ -39,7 +39,6 @@ parseIso8601Time :: Monad m => String -> m UTCTime
 parseIso8601Time = parseTimeM True defaultTimeLocale "%FT%T%QZ"
 
 
-
 -- | Decode records from CSV and load them into the database.
 -- Database operations are idempotent, so no issue with loading the same record
 -- multiple times.

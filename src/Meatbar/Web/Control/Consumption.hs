@@ -74,7 +74,8 @@ createConsumption = do
 getConsumptionStreak :: MeatbarAction ()
 getConsumptionStreak = do
     cs <- transact Query.listConsumptions
-    json $ fmap streakObject <$> allHigherCountDailyStreaks byConsumedAt cs
+    json $ fmap streakObject
+        <$> allHigherCountDailyStreaks byConsumedAt cs
     where
         byConsumedAt = consumptionConsumedAt . entityVal
         streakObject (date, count) =
@@ -84,7 +85,8 @@ getConsumptionStreak = do
 getMonthlyStats :: MeatbarAction ()
 getMonthlyStats = do
     cs <- transact Query.listConsumptions
-    json $ monthObject <$> largestDayEachMonth byConsumedAt cs
+    json $ monthObject
+        <$> largestDayEachMonth byConsumedAt cs
     where
         byConsumedAt = consumptionConsumedAt . entityVal
         monthObject (date, count) =
